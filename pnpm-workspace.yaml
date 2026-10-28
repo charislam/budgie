@@ -1,0 +1,6 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Only resolve dependency versions published at least 7 days ago (in minutes).
+minimumReleaseAge: 10080
