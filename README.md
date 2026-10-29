@@ -48,7 +48,7 @@ pnpm check
 pnpm test
 pnpm test:integration
 pnpm format:check
-docker exec -i supabase_db_budgie psql -U postgres -d postgres -v ON_ERROR_STOP=1 < supabase/tests/envelopes.sql
+pnpm exec supabase test db --local
 ```
 
 `test:integration` exercises real local OTP, consent, PKCE, token refresh, audience

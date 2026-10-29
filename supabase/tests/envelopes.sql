@@ -1,26 +1,58 @@
 begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path = public, extensions;
+select plan(10);
+
 insert into auth.users(id) values ('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002');
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
-insert into public.envelopes(name) values ('Food');
-do $$ begin
-  begin insert into public.envelopes(name) values ('food'); raise exception 'duplicate accepted'; exception when unique_violation then null; end;
-  begin insert into public.envelopes(name,user_id) values ('Other','00000000-0000-4000-8000-000000000002'); raise exception 'cross-user insert accepted'; exception when insufficient_privilege then null; end;
-  begin insert into public.envelopes(name) values ('  '); raise exception 'blank accepted'; exception when check_violation then null; end;
-  begin update public.envelopes set name='Changed'; raise exception 'update accepted'; exception when insufficient_privilege then null; end;
-end $$;
+select lives_ok(
+  $$insert into public.envelopes(name) values ('Food')$$,
+  'authenticated users can create their own envelopes'
+);
+select throws_ok(
+  $$insert into public.envelopes(name) values ('food')$$,
+  '23505', null, 'envelope names are unique per user regardless of case'
+);
+select throws_ok(
+  $$insert into public.envelopes(name,user_id) values ('Other','00000000-0000-4000-8000-000000000002')$$,
+  '42501', null, 'users cannot create envelopes for another user'
+);
+select throws_ok(
+  $$insert into public.envelopes(name) values ('  ')$$,
+  '23514', null, 'blank envelope names are rejected'
+);
+select throws_ok(
+  $$update public.envelopes set name='Changed'$$,
+  '42501', null, 'authenticated users cannot update envelopes'
+);
+
 insert into public.envelopes(name) select 'Envelope ' || lpad(n::text,3,'0') from generate_series(1,60) n;
-do $$ declare count_rows int; begin
-  select count(*) into count_rows from public.list_envelopes_page('name_asc');
-  if count_rows <> 51 then raise exception 'page size incorrect'; end if;
-  select count(*) into count_rows from public.list_envelopes_page('created_desc');
-  if count_rows <> 51 then raise exception 'date page size incorrect'; end if;
-end $$;
+select is(
+  (select count(*) from public.list_envelopes_page('name_asc')),
+  51::bigint, 'name pagination returns at most 51 envelopes'
+);
+select is(
+  (select count(*) from public.list_envelopes_page('created_desc')),
+  51::bigint, 'date pagination returns at most 51 envelopes'
+);
+
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
-do $$ begin if exists(select 1 from public.envelopes) then raise exception 'cross-user read'; end if; end $$;
-insert into public.envelopes(name) values ('Food');
+select is_empty(
+  $$select 1 from public.envelopes$$,
+  'users cannot read another user''s envelopes'
+);
+select lives_ok(
+  $$insert into public.envelopes(name) values ('Food')$$,
+  'different users can use the same envelope name'
+);
+
 set local role anon;
-do $$ begin
-  begin perform 1 from public.envelopes; raise exception 'anonymous read'; exception when insufficient_privilege then null; end;
-end $$;
+select throws_ok(
+  $$select 1 from public.envelopes$$,
+  '42501', null, 'anonymous users cannot read envelopes'
+);
+
+reset role;
+select * from finish();
 rollback;
