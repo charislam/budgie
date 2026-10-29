@@ -12,11 +12,11 @@ select lives_ok(
 );
 select throws_ok(
   $$insert into public.envelopes(name) values ('food')$$,
-  '23505', null, 'envelope names are unique per user regardless of case'
+  '23505', null, 'envelope names are unique per budget regardless of case'
 );
 select throws_ok(
-  $$insert into public.envelopes(name,user_id) values ('Other','00000000-0000-4000-8000-000000000002')$$,
-  '42501', null, 'users cannot create envelopes for another user'
+  $$insert into public.envelopes(name,budget_id) values ('Other','00000000-0000-4000-8000-000000000002')$$,
+  '42501', null, 'users cannot create envelopes in a budget they do not belong to'
 );
 select throws_ok(
   $$insert into public.envelopes(name) values ('  ')$$,

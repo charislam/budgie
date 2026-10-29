@@ -9,11 +9,20 @@ describe("envelope input", () => {
       description: null,
     });
   });
+  it("preserves an explicit budget selection", async () => {
+    const budget_id = "00000000-0000-4000-8000-000000000001";
+    expect(await create({ name: "Food", budget_id })).toEqual({
+      name: "Food",
+      description: null,
+      budget_id,
+    });
+  });
   it("counts Unicode code points", async () => {
     expect((await create({ name: "😀".repeat(100) })).name).toHaveLength(200);
     await expect(create({ name: "😀".repeat(101) })).rejects.toThrow();
   });
   it.each([
+    { name: "Food", budget_id: "invalid" },
     { name: "" },
     { name: " \t" },
     { name: 1 },

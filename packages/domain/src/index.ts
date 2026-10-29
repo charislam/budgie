@@ -7,6 +7,7 @@ import * as Schema from "effect/Schema";
 export const Generation = Schema.optionalKey(Schema.Number);
 export const CreateInput = Schema.Struct({
   generation: Generation,
+  budget_id: Schema.optionalKey(Schema.String.check(Schema.isUUID())),
   name: Schema.String,
   description: Schema.optionalKey(Schema.String),
 });
@@ -37,7 +38,7 @@ export const normalizeCreate = (input: unknown) =>
       return yield* Effect.fail(
         new ValidationError("Description must contain at most 500 characters.", "description"),
       );
-    return { name, description };
+    return { name, description, ...(value.budget_id ? { budget_id: value.budget_id } : {}) };
   });
 export const parseList = (input: unknown) =>
   Schema.decodeUnknownEffect(ListInput, { onExcessProperty: "error" })(input).pipe(
