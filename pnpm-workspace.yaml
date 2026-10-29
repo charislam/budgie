@@ -1,6 +1,22 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - "apps/*"
+  - "packages/*"
 
 # Only resolve dependency versions published at least 7 days ago (in minutes).
 minimumReleaseAge: 10080
+
+catalog:
+  "@effect/platform-node": "4.0.5"
+  "@modelcontextprotocol/ext-apps": "2.0.3"
+  "@supabase/supabase-js": "2.118.0"
+  "@types/node": "24.19.2"
+  "effect": "4.0.5"
+  "oxfmt": "0.74.0"
+  "oxlint": "1.89.0"
+  "supabase": "2.121.0"
+  "typescript": "7.0.2"
+  "vite": "8.3.5"
+  "vitest": "5.0.5"
+  "@modelcontextprotocol/server": "2.3.1"
+  "@modelcontextprotocol/client": "2.3.1"
+  "@modelcontextprotocol/core": "2.3.1"

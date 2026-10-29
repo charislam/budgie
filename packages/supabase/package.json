@@ -1,0 +1,11 @@
+{
+  "name": "@budgie/supabase",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@budgie/domain": "workspace:*",
+    "@supabase/supabase-js": "catalog:",
+    "effect": "catalog:"
+  }
+}

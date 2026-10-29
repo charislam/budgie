@@ -1,8 +1,38 @@
 {
   "name": "budgie",
   "private": true,
-  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "build": "pnpm --filter @budgie/ui build",
+    "check": "tsc && oxlint apps packages",
+    "test": "vitest run",
+    "format": "oxfmt apps packages package.json pnpm-workspace.yaml tsconfig.json",
+    "format:check": "oxfmt --check apps packages package.json pnpm-workspace.yaml tsconfig.json",
+    "start": "node --env-file=.env.local --experimental-transform-types apps/mcp/src/main.ts",
+    "test:integration": "node --experimental-transform-types scripts/auth-probe.mjs",
+    "setup:local": "node scripts/setup-local.mjs"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@modelcontextprotocol/client": "catalog:",
+    "@modelcontextprotocol/core": "catalog:",
+    "@modelcontextprotocol/ext-apps": "catalog:",
+    "@modelcontextprotocol/server": "catalog:",
+    "@supabase/supabase-js": "catalog:",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@mcpjam/inspector": "^3.16.2",
+    "@types/node": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "supabase": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
   "engines": {
+    "node": "24.22.1",
     "pnpm": ">=10.20.0 <11"
-  }
+  },
+  "packageManager": "pnpm@10.20.0"
 }

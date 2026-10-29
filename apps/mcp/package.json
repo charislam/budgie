@@ -1,0 +1,16 @@
+{
+  "name": "@budgie/mcp",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@budgie/domain": "workspace:*",
+    "@budgie/supabase": "workspace:*",
+    "@effect/platform-node": "catalog:",
+    "@modelcontextprotocol/client": "catalog:",
+    "@modelcontextprotocol/core": "catalog:",
+    "@modelcontextprotocol/ext-apps": "catalog:",
+    "@modelcontextprotocol/server": "catalog:",
+    "@supabase/supabase-js": "catalog:",
+    "effect": "catalog:"
+  }
+}
